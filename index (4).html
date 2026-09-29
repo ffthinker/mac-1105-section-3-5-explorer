@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#15233b">
+  <title>MAC 1105 · Function Transformation Explorer</title>
+  <meta name="description" content="Explore how a, h, and k change absolute value, quadratic, cubic, square root, and cube root graphs.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2315233b'/%3E%3Cpath d='M10 14 32 48 54 14' fill='none' stroke='%235bb8e7' stroke-width='7'/%3E%3C/svg%3E">
+  <style>
+    :root{font-family:Arial,Helvetica,sans-serif;color:#15233b;background:#f6f9fc;--a:#663399;--h:#006f73;--k:#995000;--blue:#245dad;--green:#135d38}
+    *{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}
+    header{background:#15233b;color:white;padding:17px clamp(18px,3vw,42px);display:flex;align-items:baseline;gap:20px;flex-wrap:wrap}
+    header h1{font-size:clamp(22px,2.3vw,32px);margin:0}header span{font-size:16px;color:#d5e7f7}
+    main{max-width:1500px;margin:auto;padding:24px clamp(16px,3vw,42px) 32px}
+    .surface{display:grid;grid-template-columns:minmax(380px,1.1fr) minmax(350px,.9fr);gap:30px;align-items:start}
+    .graph-side,.controls{min-width:0}.formulas{display:flex;gap:24px;flex-wrap:wrap;align-items:baseline;margin-bottom:14px}
+    .formulas .label{display:block;color:#4b5d70;font-size:16px;font-weight:700;margin-bottom:5px}.formulas .math{font-size:clamp(24px,2.5vw,35px);font-weight:700;white-space:nowrap}
+    .a{color:var(--a)}.h{color:var(--h)}.k{color:var(--k)}
+    .graph-frame{background:white;border:1px solid #c7d4e1;border-radius:10px;padding:8px;max-width:690px}
+    svg{display:block;width:100%;height:auto;touch-action:none}.legend{display:flex;gap:20px;flex-wrap:wrap;margin:10px 3px 2px;color:#42566d;font-size:17px}
+    .swatch{display:inline-block;width:30px;height:4px;vertical-align:middle;margin-right:7px;border-radius:2px;background:#66788b}.swatch.blue{background:var(--blue)}
+    .controls{background:white;border:1px solid #c7d4e1;border-radius:10px;padding:20px 24px 24px}
+    .family{border:0;margin:0 0 16px;padding:0}.family legend{font-size:21px;font-weight:700;margin-bottom:10px}.family-options{display:flex;flex-wrap:wrap;gap:8px}.family-button{min-height:45px;padding:7px 12px;border:2px solid #53718d;border-radius:7px;background:#f4f8fc;color:#15233b;font-size:18px;font-weight:700}.family-button[aria-pressed="true"]{background:#dceafa;border-color:#245dad;color:#143f79}
+    .family-button:focus-visible{outline:3px solid #ffad36;outline-offset:3px}
+    .intro{font-size:19px;line-height:1.35;margin:0 0 14px}.control{border:0;border-top:1px solid #d9e2eb;margin:0;padding:14px 0 16px}
+    .control legend{font-size:23px;font-weight:700;padding:0 8px 0 0}.control.a-control legend{color:var(--a)}.control.h-control legend{color:var(--h)}.control.k-control legend{color:var(--k)}
+    .options{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0}.option{min-width:66px;min-height:46px;padding:7px 13px;background:#e8f3f5;border:2px solid #087f8c;border-radius:7px;color:#15233b;font-size:20px;font-weight:700}
+    .option[aria-pressed="true"]{background:#d9f4e4;border-color:#157347;color:#135d38}.option:focus-visible,input:focus-visible,.reset:focus-visible{outline:3px solid #ffad36;outline-offset:3px}
+    .custom{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:16px;color:#35475c}.custom input[type=range]{flex:1 1 150px;max-width:250px;accent-color:#245dad}.custom input[type=number]{width:86px;min-height:43px;padding:5px 8px;border:2px solid #869bb0;border-radius:6px;color:#15233b;background:white;font-size:20px}
+    .result{border-top:2px solid #d9e2eb;padding-top:17px;min-height:130px}.result h2{font-size:18px;margin:0 0 8px;color:#4b5d70}.result .equation{font-size:clamp(27px,2.6vw,37px);font-weight:700;color:#245dad;line-height:1.25;overflow-wrap:anywhere}
+    .result .pending{font-size:21px;color:#526479;line-height:1.4}.features{font-size:18px;margin-top:9px;line-height:1.4}.reset{margin-top:15px;background:#15233b;color:white;border:0;border-radius:6px;min-height:43px;padding:8px 18px;font-weight:700}
+    .hint{font-size:16px;color:#526479;margin:12px 1px 0;line-height:1.35}
+    @media(max-width:850px){.surface{grid-template-columns:1fr}.graph-frame{max-width:650px}.controls{max-width:650px}}
+    @media(max-width:450px){main{padding:16px}.controls{padding:16px}.graph-frame{padding:3px}.formulas .math{font-size:24px}.option{min-width:60px}}
+  </style>
+</head>
+<body>
+  <header><h1>Function Transformation Explorer</h1><span>MAC 1105 · Section 3.5 · Dr. Fitzroy Farquharson</span></header>
+  <main>
+    <div class="surface">
+      <section class="graph-side" aria-label="Function graph">
+        <div class="formulas"><div><span class="label">General form</span><div class="math" id="general-form">g(x) = <span class="a">a</span>|x − <span class="h">h</span>| + <span class="k">k</span></div></div></div>
+        <div class="graph-frame">
+          <svg id="graph" viewBox="0 0 600 600" role="img" aria-label="Coordinate plane from negative ten to ten on both axes; parent function y equals absolute value of x" xmlns="http://www.w3.org/2000/svg">
+            <defs><clipPath id="plot-clip"><rect x="55" y="25" width="500" height="500"/></clipPath></defs>
+            <rect width="600" height="600" fill="white"/><g id="grid"></g>
+            <path id="parent" fill="none" stroke="#63778b" stroke-width="4" clip-path="url(#plot-clip)"></path>
+            <path id="transformed" fill="none" stroke="#245dad" stroke-width="5" clip-path="url(#plot-clip)"></path>
+            <circle id="vertex" r="10" fill="#245dad" stroke="white" stroke-width="3" style="display:none;cursor:grab"></circle>
+          </svg>
+          <div class="legend"><span><i class="swatch"></i><span id="parent-label">Parent: y = |x|</span></span><span><i class="swatch blue"></i>Transformed graph</span><span>Each grid line = 1 unit</span></div>
+        </div>
+        <p class="hint">Drag the blue anchor point to change h and k. The controls also work with a keyboard.</p>
+      </section>
+      <section class="controls" aria-label="Choose transformation values">
+        <fieldset class="family"><legend>Choose a function</legend><div class="family-options">
+          <button type="button" class="family-button" data-family="absolute" aria-pressed="true">Absolute value</button>
+          <button type="button" class="family-button" data-family="quadratic" aria-pressed="false">Quadratic</button>
+          <button type="button" class="family-button" data-family="cubic" aria-pressed="false">Cubic</button>
+          <button type="button" class="family-button" data-family="sqrt" aria-pressed="false">Square root</button>
+          <button type="button" class="family-button" data-family="cbrt" aria-pressed="false">Cube root</button>
+        </div></fieldset>
+        <p class="intro">Choose <span class="a">a</span>, <span class="h">h</span>, and <span class="k">k</span>. The blue graph responds as you choose. The equation appears after all three have values.</p>
+        <fieldset class="control a-control" data-param="a"><legend>a · vertical scale and reflection</legend><div class="options"><button type="button" class="option" data-param="a" data-value="-2">−2</button><button type="button" class="option" data-param="a" data-value="0.5">½</button><button type="button" class="option" data-param="a" data-value="1">1</button><button type="button" class="option" data-param="a" data-value="2">2</button></div><label class="custom">Or choose any value <input type="range" data-range="a" min="-5" max="5" step="0.5" value="1" aria-label="a slider"><input type="number" data-number="a" min="-5" max="5" step="0.5" placeholder="a" aria-label="a value"></label></fieldset>
+        <fieldset class="control h-control" data-param="h"><legend>h · horizontal shift</legend><div class="options"><button type="button" class="option" data-param="h" data-value="-2">−2</button><button type="button" class="option" data-param="h" data-value="0">0</button><button type="button" class="option" data-param="h" data-value="2">2</button></div><label class="custom">Or choose any value <input type="range" data-range="h" min="-10" max="10" step="0.5" value="0" aria-label="h slider"><input type="number" data-number="h" min="-10" max="10" step="0.5" placeholder="h" aria-label="h value"></label></fieldset>
+        <fieldset class="control k-control" data-param="k"><legend>k · vertical shift</legend><div class="options"><button type="button" class="option" data-param="k" data-value="-2">−2</button><button type="button" class="option" data-param="k" data-value="0">0</button><button type="button" class="option" data-param="k" data-value="2">2</button></div><label class="custom">Or choose any value <input type="range" data-range="k" min="-10" max="10" step="0.5" value="0" aria-label="k slider"><input type="number" data-number="k" min="-10" max="10" step="0.5" placeholder="k" aria-label="k value"></label></fieldset>
+        <div class="result" aria-live="polite"><h2>Function after selection</h2><div id="equation" class="pending">Choose a, h, and k to reveal the equation.</div><div id="features" class="features"></div></div>
+        <button class="reset" type="button" id="reset">Reset values</button>
+      </section>
+    </div>
+  </main>
+  <script>
+    const values={a:null,h:null,k:null};const defaults={a:1,h:0,k:0};
+    let family='absolute';
+    const families={
+      absolute:{base:x=>Math.abs(x),general:'|x − <span class="h">h</span>|',wrap:s=>`|${s}|`,parent:'y = |x|',point:'Vertex'},
+      quadratic:{base:x=>x*x,general:'(x − <span class="h">h</span>)²',wrap:s=>`(${s})²`,parent:'y = x²',point:'Vertex'},
+      cubic:{base:x=>x*x*x,general:'(x − <span class="h">h</span>)³',wrap:s=>`(${s})³`,parent:'y = x³',point:'Inflection point'},
+      sqrt:{base:x=>x<0?NaN:Math.sqrt(x),general:'√(x − <span class="h">h</span>)',wrap:s=>`√(${s})`,parent:'y = √x',point:'Starting point'},
+      cbrt:{base:x=>Math.cbrt(x),general:'∛(x − <span class="h">h</span>)',wrap:s=>`∛(${s})`,parent:'y = ∛x',point:'Inflection point'}
+    };
+    const ns='http://www.w3.org/2000/svg',grid=document.getElementById('grid'),parent=document.getElementById('parent'),transformed=document.getElementById('transformed'),vertex=document.getElementById('vertex'),graph=document.getElementById('graph');
+    const xPix=x=>55+(x+10)*25,yPix=y=>25+(10-y)*25;
+    const line=(x1,y1,x2,y2,color,width=1)=>{const el=document.createElementNS(ns,'line');for(const [key,val] of Object.entries({x1,y1,x2,y2,stroke:color,'stroke-width':width}))el.setAttribute(key,val);grid.append(el)};
+    for(let n=-10;n<=10;n++){line(xPix(n),25,xPix(n),525,n===0?'#334963':'#dfE7ef',n===0?2:1);line(55,yPix(n),555,yPix(n),n===0?'#334963':'#dfe7ef',n===0?2:1);if(n%2===0){for(const [x,y,anchor,text] of [[xPix(n),550,'middle',n],[42,yPix(n)+5,'end',n]]){const t=document.createElementNS(ns,'text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('text-anchor',anchor);t.setAttribute('fill','#42566d');t.setAttribute('font-size','15');t.textContent=text;grid.append(t)}}}
+    function pathFor(fn,start=-10){let d='',drawing=false;for(let i=0;i<=800;i++){let x=-10+i*.025;if(x<start-1e-9){drawing=false;continue}let y=fn(x);if(!Number.isFinite(y)){drawing=false;continue}d+=(drawing?'L':'M')+xPix(x).toFixed(2)+' '+yPix(y).toFixed(2)+' ';drawing=true}return d}
+    const signed=n=>n<0?'−'+Math.abs(n):String(n);
+    function formula(a,h,k){const coeff=a===1?'':a===-1?'−':signed(a),inside=h===0?'x':h<0?`x + ${Math.abs(h)}`:`x − ${h}`,shift=k===0?'':k<0?` − ${Math.abs(k)}`:` + ${k}`;return `g(x) = ${coeff}${families[family].wrap(inside)}${shift}`}
+    function update(){
+      const a=values.a??defaults.a,h=values.h??defaults.h,k=values.k??defaults.k,started=Object.values(values).some(v=>v!==null),complete=Object.values(values).every(v=>v!==null);
+      transformed.style.display=started?'':'none';vertex.style.display=started?'':'none';
+      const selected=families[family];
+      document.getElementById('general-form').innerHTML=`g(x) = <span class="a">a</span>${selected.general} + <span class="k">k</span>`;
+      document.getElementById('parent-label').textContent='Parent: '+selected.parent;
+      parent.setAttribute('d',pathFor(selected.base,family==='sqrt'?0:-10));
+      transformed.setAttribute('d',pathFor(x=>a*selected.base(x-h)+k,family==='sqrt'?h:-10));vertex.setAttribute('cx',xPix(h));vertex.setAttribute('cy',yPix(k));
+      for(const button of document.querySelectorAll('.option'))button.setAttribute('aria-pressed',String(values[button.dataset.param]!==null&&Number(button.dataset.value)===values[button.dataset.param]));
+      for(const p of ['a','h','k']){document.querySelector(`[data-range="${p}"]`).value=values[p]??defaults[p];document.querySelector(`[data-number="${p}"]`).value=values[p]??''}
+      graph.setAttribute('aria-label',complete?`Coordinate plane from negative ten to ten on both axes, parent ${selected.parent}, transformed ${formula(a,h,k)}, ${selected.point.toLowerCase()} ${h}, ${k}`:`Coordinate plane from negative ten to ten on both axes. Parent ${selected.parent}. Choose a, h, and k to reveal a transformed function.`);
+      const result=document.getElementById('equation'),features=document.getElementById('features');
+      if(complete){result.className='equation';result.textContent=formula(a,h,k);let detail=`${selected.point} (${signed(h)}, ${signed(k)})`;if(family==='absolute'||family==='quadratic'||family==='sqrt')detail+=` · ${a>0?`range y ≥ ${signed(k)}`:a<0?`range y ≤ ${signed(k)}`:`range y = ${signed(k)}`}`;if(family==='sqrt')detail+=` · domain x ≥ ${signed(h)}`;features.textContent=detail}
+      else{result.className='pending';result.textContent='Choose a, h, and k to reveal the equation.';features.textContent=''}
+    }
+    function setValue(param,value){if(!Number.isFinite(value))return;let input=document.querySelector(`[data-number="${param}"]`),min=Number(input.min),max=Number(input.max);values[param]=Math.max(min,Math.min(max,Math.round(value*2)/2));update()}
+    document.querySelectorAll('.option').forEach(b=>b.addEventListener('click',()=>setValue(b.dataset.param,Number(b.dataset.value))));
+    document.querySelectorAll('.family-button').forEach(b=>b.addEventListener('click',()=>{family=b.dataset.family;document.querySelectorAll('.family-button').forEach(button=>button.setAttribute('aria-pressed',String(button===b)));update()}));
+    document.querySelectorAll('[data-range]').forEach(el=>el.addEventListener('input',()=>setValue(el.dataset.range,Number(el.value))));
+    document.querySelectorAll('[data-number]').forEach(el=>el.addEventListener('change',()=>{if(el.value.trim()!=='')setValue(el.dataset.number,Number(el.value));else{values[el.dataset.number]=null;update()}}));
+    document.getElementById('reset').addEventListener('click',()=>{values.a=values.h=values.k=null;update()});
+    let dragging=false;function moveVertex(e){const rect=graph.getBoundingClientRect(),sx=600/rect.width,sy=600/rect.height,x=(e.clientX-rect.left)*sx,y=(e.clientY-rect.top)*sy;setValue('h',(x-305)/25);setValue('k',(275-y)/25)}
+    vertex.addEventListener('pointerdown',e=>{dragging=true;vertex.setPointerCapture(e.pointerId);vertex.style.cursor='grabbing';e.preventDefault()});
+    vertex.addEventListener('pointermove',e=>{if(dragging)moveVertex(e)});vertex.addEventListener('pointerup',()=>{dragging=false;vertex.style.cursor='grab'});vertex.addEventListener('pointercancel',()=>{dragging=false;vertex.style.cursor='grab'});
+    update();
+  </script>
+</body>
+</html>
